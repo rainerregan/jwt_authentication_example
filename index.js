@@ -1,11 +1,11 @@
 import express from 'express';
 import mongoose, { mongo } from 'mongoose';
-import dbConfig from './config/db.config';
+import dbConfig from './config/db.config.js';
 import { unless } from 'express-unless';
 import * as dotenv from 'dotenv';
 
-import auth from './middlewares/auth.js';
-import errors from './middlewares/errors.js';
+import { authenticateToken } from './middlewares/auth.js';
+import { errorHandler } from './middlewares/errors.js';
 import userRoutes from './routes/user.routes.js';
 
 // Express App
@@ -20,7 +20,7 @@ mongoose.Promise = global.Promise;
 // Connect to mongoDB database based on the data from the configuration file
 mongoose.connect(dbConfig.db, {
   useNewUrlParser: true, // Using a new URL parser
-  useUnifiedTopology: true 
+  useUnifiedTopology: true
 }).then(
   () => {
     // if the connection is successful
@@ -34,14 +34,14 @@ mongoose.connect(dbConfig.db, {
 // Check if the user has the auth token.
 // Binding unless to the authentication token middleware.
 // If the user does not have a token, it will show unauthorize response
-auth.authenticateToken.unless = unless;
+authenticateToken.unless = unless;
 
 // Using unless so we can bypass the token middleware, and allowing user to access the page listed below.
 app.use(
   // If the user does not has the token, system will redirect the user to the guest page.
   // These pages does not require any token.
   // Login and register page doesnot require any token to access.
-  auth.authenticateToken.unless({
+  authenticateToken.unless({
     path: [
       { url: "/users/login", methods: ["POST"] }, // Login will create a token for user
       { url: "/users/register", methods: ["POST"] },
@@ -58,7 +58,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 
 // Using Error Handler middleware
-app.use(errors.errorHandler);
+app.use(errorHandler);
 
 // Starting the server
 app.listen(process.env.port || 4000, () => {
