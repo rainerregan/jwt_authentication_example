@@ -14,15 +14,16 @@ const app = express();
 // Setup dotenv
 dotenv.config();
 
-// Set Mongo as Global
+// Set Mongo promise as Global promise
 mongoose.Promise = global.Promise;
 
-// Connect to mongoDB database from the config
+// Connect to mongoDB database based on the data from the configuration file
 mongoose.connect(dbConfig.db, {
   useNewUrlParser: true, // Using a new URL parser
   useUnifiedTopology: true 
 }).then(
   () => {
+    // if the connection is successful
     console.log('Database connected');
   },
   (error) => {
@@ -48,12 +49,15 @@ app.use(
   })
 );
 
+// MIDDLEWARES
+// ===========
 // Using json as the body parser
 app.use(express.json());
 
 // Routes Middleware
 app.use("/users", userRoutes);
 
+// Using Error Handler middleware
 app.use(errors.errorHandler);
 
 // Starting the server
