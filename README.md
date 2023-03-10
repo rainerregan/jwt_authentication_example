@@ -18,6 +18,20 @@ npm start
 ```
 This will start the server at `http://localhost:3000`
 
+### Register 
+To register user into the database, send a POST request to the `/register` endpoint with the following payload:
+
+```js
+{
+  "username": "testuser",
+  "password": "testpassword",
+  "email": "testemail@example.com"
+}
+```
+
+The server will register user and the credential can now be used to login and get the access token.
+
+### Login
 To generate a JWT token, send a POST request to the /login endpoint with the following payload:
 
 ```js
@@ -32,7 +46,7 @@ The server will respond with a JWT token, which can be used to authenticate subs
 To authenticate a request, include the JWT token in the Authorization header of the request, like so:
 
 ```sh
-Authorization: Bearer <token>
+Authorization: Basic <token>
 ```
 
 The server will verify the JWT token and, if it is valid, allow the request to proceed.
